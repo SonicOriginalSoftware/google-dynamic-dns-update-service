@@ -33,18 +33,23 @@ RUN make
 
 FROM alpine as openrc_prep
 ARG SERVICE_USER
+ARG EXECUTABLE
 ARG EXECUTABLE_PATH
 ARG SERVICE_DIRECTORY
 ARG BUILD_OUT_DIRECTORY
 ARG SERVICE_DEPENDENCIES
 
-RUN apk add ${SERVICE_DEPENDENCIES} && adduser -D "${SERVICE_USER}"
+ENV EXECUTABLE_NAME=${EXECUTABLE}
 
-COPY --from=build --chown=root "${BUILD_OUT_DIRECTORY}/${EXECUTABLE}" "${EXECUTABLE_PATH}"
-
-USER "${SERVICE_USER}"
+RUN apk add ${SERVICE_DEPENDENCIES} && adduser -D "${SERVICE_USER}" \
+  && mkdir /run/openrc && touch /run/openrc/softlevel && rc-status
 
 WORKDIR "${SERVICE_DIRECTORY}"
+
+COPY --from=build --chown=root "${BUILD_OUT_DIRECTORY}/${EXECUTABLE}" "${EXECUTABLE_PATH}"
+COPY --chown=root "openrc/service" "/etc/init.d/${EXECUTABLE}"
+
+ENTRYPOINT [ "sh", "-c", "rc-service ${EXECUTABLE_NAME} start" ]
 
 
 FROM openrc_prep as openrc

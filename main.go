@@ -67,7 +67,6 @@ func registerInterruptHandler(frequencyTime int, ticker *time.Ticker) chan os.Si
 }
 
 func getIP(url string) ([]byte, error) {
-	// response, err := http.Get("https://domains.google.com/checkip")
 	response, err := http.Get(url)
 	if err != nil {
 		return nil, err

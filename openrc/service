@@ -2,5 +2,5 @@
 
 description="Updates Google Domains Dynamic DNS with current IP Address"
 
-command=/usr/bin/google_dynamic_dns_update_service
-command_background=true
+command=/usr/local/bin/google_dynamic_dns_update_service
+# command_background=true
