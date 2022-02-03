@@ -49,7 +49,7 @@ WORKDIR "${SERVICE_DIRECTORY}"
 COPY --from=build --chown=root "${BUILD_OUT_DIRECTORY}/${EXECUTABLE}" "${EXECUTABLE_PATH}"
 COPY --chown=root "openrc/service" "/etc/init.d/${EXECUTABLE}"
 
-ENTRYPOINT [ "sh", "-c", "rc-service ${EXECUTABLE_NAME} start" ]
+CMD [ "sh", "-c", "rc-service ${EXECUTABLE_NAME} start" ]
 
 
 FROM openrc_prep as openrc
