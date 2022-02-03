@@ -39,18 +39,16 @@ ARG SERVICE_DIRECTORY
 ARG BUILD_OUT_DIRECTORY
 ARG SERVICE_DEPENDENCIES
 
-ENV EXECUTABLE_NAME=${EXECUTABLE}
+ENV EXECUTABLE=${EXECUTABLE}
 
 RUN apk add ${SERVICE_DEPENDENCIES} && adduser -D "${SERVICE_USER}" \
-  && mkdir /run/openrc && touch /run/openrc/softlevel && rc-status
+  && mkdir /run/openrc && touch /run/openrc/softlevel && rc-status && echo rc_env_allow="*" >> /etc/rc.conf
 
 WORKDIR "${SERVICE_DIRECTORY}"
 
 COPY --from=build --chown=root "${BUILD_OUT_DIRECTORY}/${EXECUTABLE}" "${EXECUTABLE_PATH}"
 COPY --chown=root "openrc/service" "/etc/init.d/${EXECUTABLE}"
-# COPY --chown=root "openrc/config" "/etc/conf.d/${EXECUTABLE}"
 
-CMD [ "sh", "-c", "rc-service ${EXECUTABLE_NAME} start" ]
-
+ENTRYPOINT rc-service "${EXECUTABLE}" start
 
 FROM openrc_prep as openrc

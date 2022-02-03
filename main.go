@@ -20,11 +20,6 @@ func initialize() (
 ) {
 	found := false
 
-	fmt.Fprintf(os.Stdout, "Current environment:\n")
-	for _, pair := range os.Environ() {
-		fmt.Fprintf(os.Stdout, "  %v\n", pair)
-	}
-
 	if hostname, found = os.LookupEnv("GDDNS_HOSTNAME"); !found {
 		err = fmt.Errorf("No hostname given for updating")
 		return
