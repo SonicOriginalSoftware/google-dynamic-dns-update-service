@@ -3,5 +3,5 @@
 description="Updates Google Domains Dynamic DNS with current IP Address"
 
 command="${RC_SVCNAME}"
-command_background=true
+# command_background=true
 pidfile="/run/${RC_SVCNAME}.pid"
