@@ -56,6 +56,6 @@ install:
 	$(info Installing service binary...)
 	cp $(EXE_PATH) $(INSTALL_PREFIX)/bin
 	$(info Installing service file...)
-	cp $(SERVICE_PATH) /etc/init.d
+	cp $(SERVICE_PATH) /etc/init.d/$(EXE_NAME)
 
 all: service
