@@ -48,6 +48,7 @@ WORKDIR "${SERVICE_DIRECTORY}"
 
 COPY --from=build --chown=root "${BUILD_OUT_DIRECTORY}/${EXECUTABLE}" "${EXECUTABLE_PATH}"
 COPY --chown=root "openrc/service" "/etc/init.d/${EXECUTABLE}"
+# COPY --chown=root "openrc/config" "/etc/conf.d/${EXECUTABLE}"
 
 CMD [ "sh", "-c", "rc-service ${EXECUTABLE_NAME} start" ]
 

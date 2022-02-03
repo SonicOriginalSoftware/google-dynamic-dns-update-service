@@ -20,7 +20,7 @@ func initialize() (
 ) {
 	found := false
 
-	fmt.Fprintf(os.Stdout, "Current environment:")
+	fmt.Fprintf(os.Stdout, "Current environment:\n")
 	for _, pair := range os.Environ() {
 		fmt.Fprintf(os.Stdout, "  %v\n", pair)
 	}

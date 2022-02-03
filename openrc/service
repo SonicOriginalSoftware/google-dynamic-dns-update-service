@@ -2,7 +2,15 @@
 
 description="Updates Google Domains Dynamic DNS with current IP Address"
 
-# command=/usr/local/bin/google_dynamic_dns_update_service
-command=env
-command_args=google_dynamic_dns_update_service
+command="${RC_SVCNAME}"
 # command_background=true
+
+start() {
+  env
+  # env start-stop-daemon "${RC_SVCNAME}" \
+  # --make-pidfile \
+  # --pidfile /run/${RC_SVCNAME}.pid \
+  # --start \
+  # --background \
+  # -v
+}
