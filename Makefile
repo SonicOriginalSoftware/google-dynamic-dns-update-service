@@ -7,7 +7,9 @@ OUT_DIR := out
 
 EXE_NAME := google_dynamic_dns_update_service
 EXE_PATH := $(OUT_DIR)/$(EXE_NAME)
+SERVICE_PATH := openrc/service
 EXE_VERSION := latest
+
 IMAGE_TAG := $(EXE_NAME):$(EXE_VERSION)
 IMAGE_PROGRESS := auto
 IMAGE_BUILD_TARGET :=
@@ -16,6 +18,8 @@ IMAGE_BUILD_TARGET_FLAG :=
 ifdef IMAGE_BUILD_TARGET
 IMAGE_BUILD_TARGET_FLAG := --target $(IMAGE_BUILD_TARGET)
 endif
+
+INSTALL_PREFIX := /usr/local
 
 clean:
 	-rm -r $(OUT_DIR)
@@ -47,5 +51,11 @@ image:
 		-f ./Dockerfile \
 		-t $(IMAGE_TAG) \
 		.
+
+install:
+	$(info Installing service binary...)
+	cp $(EXE_PATH) $(INSTALL_PREFIX)/bin
+	$(info Installing service file...)
+	cp $(SERVICE_PATH) /etc/init.d
 
 all: service
