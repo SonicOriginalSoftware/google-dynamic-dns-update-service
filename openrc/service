@@ -1,0 +1,6 @@
+#!/sbin/openrc-run
+
+description="Updates Google Domains Dynamic DNS with current IP Address"
+
+command=/usr/bin/google_dynamic_dns_update_service
+command_background=true

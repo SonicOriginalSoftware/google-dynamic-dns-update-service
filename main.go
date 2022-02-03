@@ -13,6 +13,7 @@ import (
 
 func initialize() (
 	hostname string,
+	ipURL string,
 	frequencyTime int,
 	request *http.Request,
 	err error,
@@ -21,6 +22,11 @@ func initialize() (
 
 	if hostname, found = os.LookupEnv("GDDNS_HOSTNAME"); !found {
 		err = fmt.Errorf("No hostname given for updating")
+		return
+	}
+
+	if ipURL, found = os.LookupEnv("GDDNS_IP_URL"); !found {
+		err = fmt.Errorf("No IP URL given for updating")
 		return
 	}
 
@@ -60,8 +66,9 @@ func registerInterruptHandler(frequencyTime int, ticker *time.Ticker) chan os.Si
 	return c
 }
 
-func getIP() ([]byte, error) {
-	response, err := http.Get("https://domains.google.com/checkip")
+func getIP(url string) ([]byte, error) {
+	// response, err := http.Get("https://domains.google.com/checkip")
+	response, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -71,8 +78,8 @@ func getIP() ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
-func updateService(request *http.Request, hostname string) {
-	newIP, err := getIP()
+func updateService(request *http.Request, hostname string, ipURL string) {
+	newIP, err := getIP(ipURL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not get IP address for updating:\n%v", err)
 		return
@@ -115,7 +122,7 @@ func updateService(request *http.Request, hostname string) {
 }
 
 func main() {
-	hostname, frequencyTime, request, err := initialize()
+	hostname, ipURL, frequencyTime, request, err := initialize()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
@@ -132,7 +139,7 @@ func main() {
 	for !interrupted {
 		select {
 		case <-ticker.C:
-			updateService(request, hostname)
+			updateService(request, hostname, ipURL)
 		case <-interrupt:
 			fmt.Fprintf(os.Stdout, "\n - Service stop requested!\n")
 			interrupted = true
