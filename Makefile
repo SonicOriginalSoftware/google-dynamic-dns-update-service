@@ -1,4 +1,4 @@
-.PHONY: clean clean-service clean-all ca all service
+.PHONY: clean clean-service clean-all ca all service image
 
 FORCE:
 .DEFAULT_GOAL := all
@@ -7,6 +7,15 @@ OUT_DIR := out
 
 EXE_NAME := google_dynamic_dns_update_service
 EXE_PATH := $(OUT_DIR)/$(EXE_NAME)
+EXE_VERSION := latest
+IMAGE_TAG := $(EXE_NAME):$(EXE_VERSION)
+IMAGE_PROGRESS := auto
+IMAGE_BUILD_TARGET :=
+IMAGE_BUILD_TARGET_FLAG :=
+
+ifdef IMAGE_BUILD_TARGET
+IMAGE_BUILD_TARGET_FLAG := --target $(IMAGE_BUILD_TARGET)
+endif
 
 clean:
 	-rm -r $(OUT_DIR)
@@ -14,7 +23,14 @@ clean:
 clean-service:
 	-rm $(EXE_PATH)
 
-clean-all: clean-service clean
+clean-image-cache:
+	-docker image prune -f
+	-docker buildx prune -f
+
+clean-image:
+	-docker rmi $(IMAGE_TAG)
+
+clean-all: clean-service clean clean-image
 
 ca: clean-all
 
@@ -23,5 +39,13 @@ $(EXE_PATH): FORCE
 	go build -o $(EXE_PATH) .
 
 service: $(EXE_PATH)
+
+image:
+	docker buildx build \
+		$(IMAGE_BUILD_TARGET_FLAG) \
+		--progress $(IMAGE_PROGRESS) \
+		-f ./Dockerfile \
+		-t $(IMAGE_TAG) \
+		.
 
 all: service
