@@ -12,6 +12,8 @@ export GDDNS_FREQUENCY=$(GDDNS_FREQUENCY)
 command="$(EXE_NAME)"
 command_background=true
 pidfile="/run/$(EXE_NAME).pid"
+output_log="/var/log/$(EXE_NAME).log"
+error_log="/var/log/$(EXE_NAME).log"
 endef
 
 export SERVICE_CONTENT
