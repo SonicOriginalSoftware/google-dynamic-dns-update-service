@@ -3,11 +3,11 @@ define SERVICE_CONTENT
 
 description="Updates Google Domains Dynamic DNS with current IP Address"
 
-export GDDNS_HOSTNAME=$(GDDNS_HOSTNAME)
 export GDDNS_IP_URL=$(GDDNS_IP_URL)
-export GDDNS_USERNAME=$(GDDNS_USERNAME)
-export GDDNS_PASSWORD=$(GDDNS_PASSWORD)
 export GDDNS_FREQUENCY=$(GDDNS_FREQUENCY)
+export GDDNS_HOSTNAMES=$(GDDNS_HOSTNAMES)
+export GDDNS_USERNAMES=$(GDDNS_USERNAMES)
+export GDDNS_PASSWORDS=$(GDDNS_PASSWORDS)
 
 command="$(EXE_NAME)"
 command_background=true

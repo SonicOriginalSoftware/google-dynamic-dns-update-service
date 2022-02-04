@@ -21,17 +21,17 @@ func Initialize() (
 	var hosts, users, passes string
 	found := false
 
-	if hosts, found = os.LookupEnv("GDDNS_HOSTNAME"); !found {
+	if hosts, found = os.LookupEnv("GDDNS_HOSTNAMES"); !found {
 		err = fmt.Errorf("No hostname given for updating")
 		return
 	}
 
-	if users, found = os.LookupEnv("GDDNS_USERNAME"); !found {
+	if users, found = os.LookupEnv("GDDNS_USERNAMES"); !found {
 		err = fmt.Errorf("No username given for updating")
 		return
 	}
 
-	if passes, found = os.LookupEnv("GDDNS_PASSWORD"); !found {
+	if passes, found = os.LookupEnv("GDDNS_PASSWORDS"); !found {
 		err = fmt.Errorf("No password given for updating")
 		return
 	}
