@@ -40,6 +40,11 @@ func Initialize() (
 	usernames = strings.Split(users, ",")
 	passwords = strings.Split(passes, ",")
 
+	if len(hostnames) != len(usernames) && len(usernames) != len(passwords) {
+		err = fmt.Errorf("Usernames and passwords must correspond to hostnames")
+		return
+	}
+
 	if ipURL, found = os.LookupEnv("GDDNS_IP_URL"); !found {
 		err = fmt.Errorf("No IP URL given for updating")
 		return
