@@ -1,13 +1,14 @@
-.PHONY: clean clean-service clean-all ca all service image
+.PHONY: clean clean-service clean-all ca all service image openrc
 
 FORCE:
 .DEFAULT_GOAL := all
 
 OUT_DIR := out
 
-EXE_NAME := google_dynamic_dns_update_service
+EXE_NAME := gddns
 EXE_PATH := $(OUT_DIR)/$(EXE_NAME)
-SERVICE_PATH := openrc/service
+SERVICE_DIR := $(OUT_DIR)/openrc
+SERVICE_PATH := $(SERVICE_DIR)/$(EXE_NAME)
 EXE_VERSION := latest
 
 IMAGE_TAG := $(EXE_NAME):$(EXE_VERSION)
@@ -21,20 +22,18 @@ endif
 
 INSTALL_PREFIX := /usr/local
 
+include service.Makefile
+
 clean:
 	-rm -r $(OUT_DIR)
 
 clean-service:
 	-rm $(EXE_PATH)
 
-clean-image-cache:
-	-docker image prune -f
-	-docker buildx prune -f
+clean-openrc:
+	-rm $(SERVICE_PATH)
 
-clean-image:
-	-docker rmi $(IMAGE_TAG)
-
-clean-all: clean-service clean clean-image
+clean-all: clean-service clean-openrc clean clean-image
 
 ca: clean-all
 
@@ -44,13 +43,15 @@ $(EXE_PATH): FORCE
 
 service: $(EXE_PATH)
 
-image:
-	docker buildx build \
-		$(IMAGE_BUILD_TARGET_FLAG) \
-		--progress $(IMAGE_PROGRESS) \
-		-f ./Dockerfile \
-		-t $(IMAGE_TAG) \
-		.
+$(SERVICE_DIR):
+	$(info Creating service directory...)
+	mkdir $(SERVICE_DIR)
+
+$(SERVICE_PATH): $(SERVICE_DIR)
+	$(info Generating service file...)
+	echo "$$SERVICE_CONTENT" > "$(SERVICE_PATH)"
+
+openrc: $(SERVICE_PATH)
 
 install:
 	$(info Installing service binary...)
@@ -58,4 +59,5 @@ install:
 	$(info Installing service file...)
 	cp $(SERVICE_PATH) /etc/init.d/$(EXE_NAME)
 
-all: service
+
+all: service openrc
