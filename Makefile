@@ -50,6 +50,7 @@ $(SERVICE_DIR):
 $(SERVICE_PATH): $(SERVICE_DIR)
 	$(info Generating service file...)
 	echo "$$SERVICE_CONTENT" > "$(SERVICE_PATH)"
+	chmod 0755 $(SERVICE_PATH)
 
 openrc: $(SERVICE_PATH)
 
