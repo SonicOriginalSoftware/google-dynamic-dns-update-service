@@ -10,6 +10,7 @@ export GDDNS_PASSWORD=$(GDDNS_PASSWORD)
 export GDDNS_FREQUENCY=$(GDDNS_FREQUENCY)
 
 command="$(EXE_NAME)"
+command_background=true
 pidfile="/run/$(EXE_NAME).pid"
 endef
 
