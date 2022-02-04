@@ -16,7 +16,7 @@ func updateService(
 	client *http.Client,
 	r chan updateResult,
 	outlog *log.Logger,
-	newIP, hostname, ipURL, username, password string,
+	newIP, hostname, username, password string,
 ) {
 	var request *http.Request
 	var err error
@@ -34,7 +34,7 @@ func updateService(
 
 	request.URL.RawQuery = query.Encode()
 
-	outlog.Printf("\nRequest: %v\n", request.URL)
+	outlog.Printf("Request\n  %v\n", request.URL)
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -56,15 +56,18 @@ func updateService(
 		err = fmt.Errorf("Could not update dynamic DNS")
 	}
 
-	r <- updateResult{fmt.Sprintf("  Status: %v : %v\n", response.Status, updateStatus), err}
+	r <- updateResult{
+		fmt.Sprintf("[%v] %v\n", response.Status, updateStatus),
+		err,
+	}
 }
 
 // Update sends requests to update all Google Dynamic DNS hostnames with the current IP
 func Update(
 	client *http.Client,
 	outlog, errlog *log.Logger,
-	ipURL, username, password string,
-	hostnames []string,
+	ipURL string,
+	hostnames, usernames, passwords []string,
 ) {
 	newIP, err := Get(ipURL)
 	if err != nil {
@@ -74,25 +77,24 @@ func Update(
 
 	result := make(chan updateResult, len(hostnames))
 
-	for _, hostname := range hostnames {
-
+	for eachIndex := range hostnames {
 		go updateService(
 			client,
 			result,
 			outlog,
 			string(newIP),
-			hostname,
-			ipURL,
-			username,
-			password,
+			hostnames[eachIndex],
+			usernames[eachIndex],
+			passwords[eachIndex],
 		)
-	}
 
-	var r updateResult
-	select {
-	case result <- r:
-		if r.err != nil {
-			errlog.Printf("%v:  %v\n", r.status, err.Error())
+		select {
+		case r := <-result:
+			if r.err != nil {
+				errlog.Printf("\n  %v\n  %v\n", r.err.Error(), r.status)
+			} else {
+				outlog.Printf("%v\n", r.status)
+			}
 		}
 	}
 }

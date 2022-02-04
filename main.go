@@ -10,24 +10,40 @@ func main() {
 	outlog := log.New(os.Stdout, "", log.LstdFlags)
 	errlog := log.New(os.Stderr, "[ERROR] ", log.LstdFlags)
 
-	hostnames, apiURL, frequencyTime, username, password, client, err := lib.Initialize()
+	outlog.Printf("Spinning up service...")
+
+	hostnames, usernames, passwords, ipURL, updateFrequency, client, err := lib.Initialize()
 	if err != nil {
 		errlog.Fatalf("%v\n", err)
 	}
 
-	interrupt := lib.RegisterInterruptHandler(frequencyTime)
-	ticker := lib.RegisterTicker(frequencyTime)
+	outlog.Printf(
+		"\n  Hostnames: %v\n  API URL: %v\n  Update Frequency: %v",
+		hostnames,
+		ipURL,
+		updateFrequency,
+	)
+
+	outlog.Printf("Registering service...")
+
+	interrupt := lib.RegisterInterruptHandler(updateFrequency)
+	ticker := lib.RegisterTicker(updateFrequency)
+
+	outlog.Printf("Service registered! Starting...")
 
 	interrupted := false
 	for !interrupted {
 		select {
 		case <-ticker.C:
-			lib.Update(client, outlog, errlog, apiURL, username, password, hostnames)
-		case <-interrupt:
-			outlog.Printf("\n - Service stop requested!\n")
+			lib.Update(client, outlog, errlog, ipURL, hostnames, usernames, passwords)
+		case s := <-interrupt:
+			outlog.Printf("Service stop requested: %v\n", s)
 			interrupted = true
 		}
 	}
+
+	defer ticker.Stop()
+	defer close(interrupt)
 
 	outlog.Printf("Service stopped!\n")
 }

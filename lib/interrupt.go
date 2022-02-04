@@ -10,6 +10,5 @@ import (
 func RegisterInterruptHandler(frequencyTime int) (c chan os.Signal) {
 	c = make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM)
-	defer close(c)
 	return c
 }
