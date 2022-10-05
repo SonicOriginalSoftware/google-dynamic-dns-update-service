@@ -8,8 +8,8 @@ import (
 )
 
 type updateResult struct {
-	status string
 	err    error
+	status string
 }
 
 func updateService(
@@ -22,7 +22,7 @@ func updateService(
 	var err error
 
 	if request, err = http.NewRequest("GET", "https://domains.google.com/nic/update", nil); err != nil {
-		r <- updateResult{"Could not generate request", err}
+		r <- updateResult{status: "Could not generate request", err: err}
 		return
 	}
 
@@ -38,13 +38,13 @@ func updateService(
 
 	response, err := client.Do(request)
 	if err != nil {
-		r <- updateResult{"Could not fetch update request", err}
+		r <- updateResult{status: "Could not fetch update request", err: err}
 		return
 	}
 
 	update, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		r <- updateResult{"Could not read update response", err}
+		r <- updateResult{status: "Could not read update response", err: err}
 		return
 	}
 
@@ -57,8 +57,8 @@ func updateService(
 	}
 
 	r <- updateResult{
-		fmt.Sprintf("[%v] %v\n", response.Status, updateStatus),
-		err,
+		status: fmt.Sprintf("[%v] %v\n", response.Status, updateStatus),
+		err:    err,
 	}
 }
 

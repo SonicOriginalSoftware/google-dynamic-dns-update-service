@@ -1,5 +1,3 @@
-.PHONY: clean clean-service clean-all ca all service image openrc
-
 FORCE:
 .DEFAULT_GOAL := all
 
@@ -11,31 +9,27 @@ SERVICE_DIR := $(OUT_DIR)/openrc
 SERVICE_PATH := $(SERVICE_DIR)/$(EXE_NAME)
 EXE_VERSION := latest
 
-IMAGE_TAG := $(EXE_NAME):$(EXE_VERSION)
-IMAGE_PROGRESS := auto
-IMAGE_BUILD_TARGET :=
-IMAGE_BUILD_TARGET_FLAG :=
-
-ifdef IMAGE_BUILD_TARGET
-IMAGE_BUILD_TARGET_FLAG := --target $(IMAGE_BUILD_TARGET)
-endif
-
 INSTALL_PREFIX := /usr/local
 
 include service.Makefile
 
+clean-all:
+.PHONY: clean-all
+
 clean:
 	-rm -r $(OUT_DIR)
+clean-all: clean
+.PHONY: clean
 
 clean-service:
 	-rm $(EXE_PATH)
+clean-all: clean-service
+.PHONY: clean-service
 
 clean-openrc:
 	-rm $(SERVICE_PATH)
-
-clean-all: clean-service clean-openrc clean clean-image
-
-ca: clean-all
+clean-all: clean-openrc
+.PHONY: clean-openrc
 
 $(EXE_PATH): FORCE
 	$(info Building service...)
@@ -53,12 +47,15 @@ $(SERVICE_PATH): service.Makefile $(SERVICE_DIR)
 	chmod 0755 $(SERVICE_PATH)
 
 openrc: $(SERVICE_PATH)
+.PHONY: openrc
 
 install:
 	$(info Installing service binary...)
 	cp $(EXE_PATH) $(INSTALL_PREFIX)/bin
 	$(info Installing service file...)
 	cp $(SERVICE_PATH) /etc/init.d/$(EXE_NAME)
+.PHONY: install
 
 
 all: service openrc
+.PHONY: all

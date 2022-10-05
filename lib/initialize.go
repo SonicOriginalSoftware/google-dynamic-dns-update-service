@@ -1,3 +1,4 @@
+// revive:disable:package-comments
 package lib
 
 import (
@@ -16,7 +17,7 @@ func Initialize() (
 	client *http.Client,
 	err error,
 ) {
-	client = &http.Client{}
+	client = http.DefaultClient
 
 	var hosts, users, passes string
 	found := false

@@ -1,3 +1,4 @@
+// revive:disable:package-comments
 package main
 
 import (
@@ -18,7 +19,7 @@ func main() {
 	}
 
 	outlog.Printf(
-		"\n  Hostnames: %v\n  API URL: %v\n  Update Frequency: %v",
+		"\n  Hostnames: %v\n  API URL: %v\n  Update Frequency: %v s",
 		hostnames,
 		ipURL,
 		updateFrequency,
@@ -26,10 +27,10 @@ func main() {
 
 	outlog.Printf("Registering service...")
 
-	interrupt := lib.RegisterInterruptHandler(updateFrequency)
+	interrupt := lib.RegisterInterruptHandler()
 	ticker := lib.RegisterTicker(updateFrequency)
 
-	outlog.Printf("Service registered! Starting...")
+	outlog.Printf("Service registered! Running...")
 
 	interrupted := false
 	for !interrupted {

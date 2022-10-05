@@ -7,7 +7,7 @@ import (
 )
 
 // RegisterInterruptHandler registers a channel for handling an program kill/interrupt signal
-func RegisterInterruptHandler(frequencyTime int) (c chan os.Signal) {
+func RegisterInterruptHandler() (c chan os.Signal) {
 	c = make(chan os.Signal)
 	signal.Notify(c, os.Interrupt, os.Kill, syscall.SIGTERM)
 	return c
